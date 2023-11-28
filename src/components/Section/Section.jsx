@@ -1,7 +1,13 @@
+import styled from 'styled-components';
+
+const CenteredText = styled.h2`
+  text-align: center;
+`;
+
 const Section = ({ title, children }) => (
-    <div>
-      <h2>{title}</h2>
-      {children}
-    </div>
-  );
+  <div>
+    <CenteredText>{title}</CenteredText>
+    {children}
+  </div>
+);
   export default Section;

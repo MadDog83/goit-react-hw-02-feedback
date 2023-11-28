@@ -1,5 +1,11 @@
+import styled from 'styled-components';
+
 const Notification = ({ message }) => (
-    <p>{message}</p>
-  );
-  
-  export default Notification;
+  <CenteredText>{message}</CenteredText>
+);
+
+const CenteredText = styled.h2`
+text-align: center;
+`;
+
+export default Notification;
