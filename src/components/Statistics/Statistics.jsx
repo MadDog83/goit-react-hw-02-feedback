@@ -1,17 +1,17 @@
 import styled from 'styled-components';
 
-const CenteredText = styled.p`
+const CenteredText = styled.div`
   text-align: center;
 `;
 
 const Statistics = ({ good, neutral, bad, total, positivePercentage }) => (
-    <div>
-      <CenteredText>Good: {good}</CenteredText>
-      <CenteredText>Neutral: {neutral}</CenteredText>
-      <CenteredText>Bad: {bad}</CenteredText>
-      <CenteredText>Total: {total}</CenteredText>
-      <CenteredText>Positive feedback: {Math.round(positivePercentage)}%</CenteredText>
-    </div>
+  <CenteredText>
+    <p>Good: {good}</p>
+    <p>Neutral: {neutral}</p>
+    <p>Bad: {bad}</p>
+    <p>Total: {total}</p>
+    <p>Positive feedback: {Math.round(positivePercentage)}%</p>
+  </CenteredText>
 );
 
 export default Statistics;
