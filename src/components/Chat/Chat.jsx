@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import styled from 'styled-components';
 
@@ -46,29 +46,62 @@ const ResponseContainer = styled.div`
   border-radius: 4px;
   width: 400px;
   text-align: left;
+  white-space: pre-wrap; /* Сохраняет пробелы и переносы строк */
 `;
 
 const Chat = () => {
   const [input, setInput] = useState('');
-  const [response, setResponse] = useState('');
+  const [displayedResponse, setDisplayedResponse] = useState('');
+
+  useEffect(() => {
+    const sendWelcomeMessage = async () => {
+      try {
+        const apiUrl = 'https://api.openai.com/v1/chat/completions';
+        const apiKey = process.env.REACT_APP_OPENAI_API_KEY;
+        const headers = {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${apiKey}`,
+        };
+
+        const requestBody = {
+          model: 'gpt-4o-mini',
+          messages: [
+            { role: 'system', content: 'You are an assistant that helps foreigners with legalization in Poland. Answer questions related to visas, residence permits, and other legal matters for foreigners in Poland.' },
+            { role: 'user', content: 'Здравствуйте! Как я могу вам помочь с вопросами о визах, разрешениях на проживание или другими юридическими вопросами в Польше? Пожалуйста, уточните, что вас интересует.' }
+          ],
+        };
+
+        const { data } = await axios.post(apiUrl, requestBody, { headers });
+
+        setDisplayedResponse(data.choices[0].message.content); // Отображаем сообщение сразу
+      } catch (error) {
+        console.error('Error sending welcome message:', error);
+      }
+    };
+
+    sendWelcomeMessage();
+  }, []);
 
   const sendMessage = async () => {
     try {
-      const apiUrl = 'https://api.openai.com/v1/chat/completions'; 
-      const apiKey = process.env.REACT_APP_OPENAI_API_KEY; 
+      const apiUrl = 'https://api.openai.com/v1/chat/completions';
+      const apiKey = process.env.REACT_APP_OPENAI_API_KEY;
       const headers = {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${apiKey}`, 
+        'Authorization': `Bearer ${apiKey}`,
       };
 
       const requestBody = {
-        model: 'gpt-4o-mini', 
-        messages: [{ role: 'user', content: input }],
+        model: 'gpt-4o-mini',
+        messages: [
+          { role: 'system', content: 'You are an assistant that helps foreigners with legalization in Poland. Answer questions related to visas, residence permits, and other legal matters for foreigners in Poland.' },
+          { role: 'user', content: input }
+        ],
       };
 
       const { data } = await axios.post(apiUrl, requestBody, { headers });
 
-      setResponse(data.choices[0].message.content);
+      setDisplayedResponse(data.choices[0].message.content); // Отображаем сообщение сразу
     } catch (error) {
       console.error('Error sending message:', error);
     }
@@ -81,12 +114,13 @@ const Chat = () => {
           type="text"
           value={input}
           onChange={(e) => setInput(e.target.value)}
+          placeholder="Введите ваш вопрос о легализации"
         />
-        <Button onClick={sendMessage}>Send</Button>
+        <Button onClick={sendMessage}>Отправить</Button>
       </InputContainer>
-      {response && (
+      {displayedResponse && (
         <ResponseContainer>
-          {response}
+          {displayedResponse}
         </ResponseContainer>
       )}
     </ChatContainer>
