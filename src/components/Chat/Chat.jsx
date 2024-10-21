@@ -52,9 +52,13 @@ const ResponseContainer = styled.div`
 const Chat = () => {
   const [input, setInput] = useState('');
   const [displayedResponse, setDisplayedResponse] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     const sendWelcomeMessage = async () => {
+      setLoading(true);
+      setError('');
       try {
         const apiUrl = 'https://api.openai.com/v1/chat/completions';
         const apiKey = process.env.REACT_APP_OPENAI_API_KEY;
@@ -76,6 +80,9 @@ const Chat = () => {
         setDisplayedResponse(data.choices[0].message.content); // Отображаем сообщение сразу
       } catch (error) {
         console.error('Error sending welcome message:', error);
+        setError('Ошибка при отправке приветственного сообщения.');
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -83,6 +90,8 @@ const Chat = () => {
   }, []);
 
   const sendMessage = async () => {
+    setLoading(true);
+    setError('');
     try {
       const apiUrl = 'https://api.openai.com/v1/chat/completions';
       const apiKey = process.env.REACT_APP_OPENAI_API_KEY;
@@ -104,6 +113,9 @@ const Chat = () => {
       setDisplayedResponse(data.choices[0].message.content); // Отображаем сообщение сразу
     } catch (error) {
       console.error('Error sending message:', error);
+      setError('Ошибка при отправке сообщения.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -116,8 +128,10 @@ const Chat = () => {
           onChange={(e) => setInput(e.target.value)}
           placeholder="Введите ваш вопрос о легализации"
         />
-        <Button onClick={sendMessage}>Отправить</Button>
+        <Button onClick={sendMessage} disabled={loading}>Отправить</Button>
       </InputContainer>
+      {loading && <p>Загрузка...</p>}
+      {error && <p style={{ color: 'red' }}>{error}</p>}
       {displayedResponse && (
         <ResponseContainer>
           {displayedResponse}
