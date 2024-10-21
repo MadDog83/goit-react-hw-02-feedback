@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import styled from 'styled-components';
+require('dotenv').config();
 
 const ChatContainer = styled.div`
   display: flex;
